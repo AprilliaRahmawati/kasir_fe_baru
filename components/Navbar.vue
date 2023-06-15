@@ -43,9 +43,8 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 const navigation = [
-  { name: 'Home', to: '/' },
-  { name: 'Barang', to: '/barang' },
-  { name: 'Kasir', to: '/kasir' },
-  { name: 'Transaksi', to: '/transaksi' },
+  { name: 'Kasir', to: '/' },
+  { name: 'Kelola Barang', to: '/barang' },
+  { name: 'Riwayat Transaksi', to: '/riwayattransaksi' },
 ]
 </script>
