@@ -1,3 +1,8 @@
+<script setup>
+  const config = useRuntimeConfig();
+  const { data: product } = await useFetch(`${config.public.apiBase}/api/product`);
+</script>
+
 <template>
   <div class="container mx-auto xl:px-20 my-8">
     <div class="flex justify-between">
@@ -5,10 +10,11 @@
       <NuxtLink
         to="/barang/create"
         class="flex-none bg-blue-700 px-4 py-2 rounded-lg text-white hover:bg-blue-800 transition duration-150"
-        >Tambah</NuxtLink
       >
+        Tambah
+      </NuxtLink>
     </div>
-    <div class="mt-8">
+    <div class="mt-8">  
       <table class="w-full text-center table-auto shadow-md">
         <thead class="bg-slate-700 text-white">
           <tr>
@@ -19,6 +25,22 @@
             <th scope="col" class="px-6 py-3">Aksi</th>
           </tr>
         </thead>
+        <tbody>
+          <tr v-for="product in product.data" :key="product.id" class="border-b">
+            <td class="px-6 py-4">{{ product.name }}</td>
+            <td class="px-6 py-4">{{ product.price }}</td>
+            <td class="px-6 py-4">{{ product.stock }}</td>
+            <td class="px-6 py-4">{{ product.code }}</td>
+            <td class="px-6 py-4">
+              <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                Edit
+              </button>
+              <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2" @click="deleteProduct(product.id)">
+                Hapus
+              </button>              
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>

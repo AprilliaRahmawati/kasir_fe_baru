@@ -1,49 +1,49 @@
 <template>
   <div class="container mx-auto xl:px-20 my-8">
-    <h1 class="text-4xl font-bold text-center">Tambah</h1>
-    <div class="mt-8 w-full max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg mx-auto">
-      <div v-if="isLoading" class="text-center">
+    <h1 class="text-4xl font-bold text-center text-blue-700">Tambah</h1>
+    <div class="mt-8 max-w-lg mx-auto bg-gray-100 border border-gray-300 rounded-lg shadow-lg">
+      <div v-if="isLoading" class="text-center py-6">
         <Spinner />
       </div>
       <div v-else>
-        <form class="space-y-6" action="" method="POST" autocomplete="off" enctype="multipart/form-data" v-on:submit.prevent="tambahBarang">
+        <form class="p-6 space-y-6" action="" method="POST" autocomplete="off" enctype="multipart/form-data" v-on:submit.prevent="tambahBarang">
           <div>
-            <label for="nama" class="block mb-2 text-sm font-medium text-gray-900">Nama</label>
-            <input type="text" id="nama" v-model="barang.nama" 
-                class="bg-gray-50 border-0 text-gray-900 text-sm rounded-lg ring-1 ring-gray-400 focus:ring-2 focus:ring-slate-500 shadow block w-full p-2.5 outline-none">
+            <label for="nama" class="block mb-2 text-sm font-medium text-gray-900">Nama Barang</label>
+            <input type="text" id="nama" v-model="barang.nama"
+                class="bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 shadow-inner block w-full px-4 py-2">
             <span class="text-red-500" v-if="errors.nama">{{ errors.nama[0] }}</span>
           </div>
           <div>
-            <label for="harga" class="block mb-2 text-sm font-medium text-gray-900">Harga</label>
-            <input type="number" id="harga" v-model="barang.harga" 
-                class="bg-gray-50 border-0 text-gray-900 text-sm rounded-lg ring-1 ring-gray-400 focus:ring-2 focus:ring-slate-500 shadow block w-full p-2.5 outline-none">
+            <label for="harga" class="block mb-2 text-sm font-medium text-gray-900">Harga Barang</label>
+            <input type="number" id="harga" v-model="barang.harga"
+                class="bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 shadow-inner block w-full px-4 py-2">
             <span class="text-red-500" v-if="errors.harga">{{ errors.harga[0] }}</span>
           </div>
           <div>
-            <label for="stok" class="block mb-2 text-sm font-medium text-gray-900">Stok</label>
+            <label for="stok" class="block mb-2 text-sm font-medium text-gray-900">Stok Barang</label>
             <input type="number" id="stok" min="1" v-model="barang.stok"
-                class="bg-gray-50 border-0 text-gray-900 text-sm rounded-lg ring-1 ring-gray-400 focus:ring-2 focus:ring-slate-500 shadow block w-full p-2.5 outline-none">
+                class="bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 shadow-inner block w-full px-4 py-2">
             <span class="text-red-500" v-if="errors.stok">{{ errors.stok[0] }}</span>
           </div>
           <div>
-            <label for="stok" class="block mb-2 text-sm font-medium text-gray-900">Kode</label>
-            <input type="number" id="stok" min="1" v-model="barang.stok"
-                class="bg-gray-50 border-0 text-gray-900 text-sm rounded-lg ring-1 ring-gray-400 focus:ring-2 focus:ring-slate-500 shadow block w-full p-2.5 outline-none">
-            <span class="text-red-500" v-if="errors.stok">{{ errors.stok[0] }}</span>
-          </div>
-          <div>
+            <label for="kode" class="block mb-2 text-sm font-medium text-gray-900">Kode Barang</label>
+            <input type="number" id="kode" min="1" v-model="barang.kode"
+                class="bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 shadow-inner block w-full px-4 py-2">
+            <span class="text-red-500" v-if="errors.kode">{{ errors.kode[0] }}</span>
           </div>
           <div class="flex justify-between">
             <NuxtLink to="/barang"
-                class="bg-slate-800 px-5 py-2.5 rounded-lg text-white hover:bg-slate-700 transition duration-150">Kembali</NuxtLink>
+                class="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-5 py-2.5 transition duration-150">Kembali</NuxtLink>
             <button type="submit"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg px-5 py-2.5">Tambah</button>
+                class="bg-blue-700 hover:bg-blue-800 text-white rounded-lg px-5 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500">Tambah</button>
           </div>
         </form>
       </div>
-    </div>    
+    </div>
   </div>
 </template>
+
+
 
 <script setup>
 useHead({
@@ -53,32 +53,25 @@ useHead({
 const config = useRuntimeConfig()
 const { $swal } = useNuxtApp()
 const barang = ref({
-  barcode: '',
+  kode: '',
   nama: '',
   harga: '',
   stok: '',
   jenis: '',
-  gambar: ''
 })
 const isLoading = ref(false)
 const errors = ref({})
-
-function handleFile(event) {
-  barang.value.gambar = event.target.files[0]
-}
 
 async function tambahBarang() {
   isLoading.value = true
   try {
     let formData = new FormData()
-    formData.append('barcode', barang.value.barcode)
-    formData.append('nama', barang.value.nama)
-    formData.append('harga', barang.value.harga)
-    formData.append('stok', barang.value.stok)
-    formData.append('jenis', barang.value.jenis)
-    formData.append('gambar', barang.value.gambar)
+    formData.append('code', barang.value.kode)
+    formData.append('name', barang.value.nama)
+    formData.append('price', barang.value.harga)
+    formData.append('stock', barang.value.stok)
 
-    const response = await $fetch(`${config.public.apiBase}/api/barang`, {
+    const response = await $fetch(`${config.public.apiBase}/api/product`, {
       method: 'POST',
       body: formData,
       headers: {
@@ -86,12 +79,10 @@ async function tambahBarang() {
       }
     })
     console.log(response)
-    barang.value.barcode = ''
+    barang.value.kode = ''
     barang.value.nama = ''
     barang.value.harga = ''
     barang.value.stok = ''
-    barang.value.jenis = ''
-    barang.value.gambar = ''
     $swal.fire({
       icon: 'success',
       title: 'Sukses',
