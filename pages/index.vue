@@ -85,6 +85,7 @@ const handleKameraSuccess = (stream) => {
 
   // Tangkap hasil pemindaian barcode
   Quagga.onDetected(function (result) {
+    console.log(result);
     const barcode = result.codeResult.code;
     tambahKeranjang(barcode);
 

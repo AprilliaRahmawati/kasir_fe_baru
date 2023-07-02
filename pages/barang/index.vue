@@ -1,6 +1,54 @@
 <script setup>
   const config = useRuntimeConfig();
-  const { data: product } = await useFetch(`${config.public.apiBase}/api/product`);
+  const { $swal } = useNuxtApp();
+  const isLoading = ref(false);
+  const product = ref([]);
+  const errors = ref({});
+  getBarang();
+
+  async function getBarang() {
+    isLoading.value = true;
+    try {
+      const response = await $fetch(`${config.public.apiBase}/api/product`);
+      console.log(response);
+      product.value = response;
+    } catch (error) {
+      console.log(error);
+      console.log(error.data);
+      if (error.data.status === 400) {
+        errors.value = error.data.errors;
+      }
+    }
+    isLoading.value = false;
+  }
+
+  async function deleteBarang(id) {
+  isLoading.value = true
+  try {
+    const response = await $fetch(`${config.public.apiBase}/api/product/`+id, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+      }
+    })
+    //berfungsi untuk mentracking data
+    console.log(response)
+
+    $swal.fire({
+      icon: 'success',
+      title: 'Sukses',
+      text: 'Data barang berhasil dihapus.',
+    })
+    getBarang();
+  } catch (error) {
+    console.log(error)
+    console.log(error.data)
+    if (error.data.status === 400) {
+      errors.value = error.data.errors
+    }
+  }
+  isLoading.value = false
+}
 </script>
 
 <template>
@@ -14,7 +62,7 @@
         Tambah
       </NuxtLink>
     </div>
-    <div class="mt-8">  
+    <div class="mt-8">
       <table class="w-full text-center table-auto shadow-md">
         <thead class="bg-slate-700 text-white">
           <tr>
@@ -36,10 +84,10 @@
               to="/barang/edit"
               class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
               Edit
-            </NuxtLink> 
-              <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2">
+            </NuxtLink>
+              <button @click="deleteBarang(product.id)" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2">
                 Hapus
-              </button>              
+              </button>
             </td>
           </tr>
         </tbody>
