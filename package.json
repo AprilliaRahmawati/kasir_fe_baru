@@ -19,6 +19,9 @@
     "@heroicons/vue": "^2.0.18",
     "axios": "^1.4.0",
     "flowbite": "^1.6.5",
-    "sweetalert2": "^11.7.12"
+    "quagga": "^0.12.1",
+    "sweetalert2": "^11.7.12",
+    "vue-barcode-reader": "^1.0.3",
+    "vue-web-cam": "^1.9.0"
   }
 }

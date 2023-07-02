@@ -1,4 +1,5 @@
 <script setup>
+import Quagga from 'quagga';
 const keranjang = ref([]);
 const barcode = ref('');
 
@@ -41,6 +42,67 @@ const hitungTotalPembayaran = () => {
   });
   return total;
 };
+
+const nyalakanKamera = () => {
+  // Periksa apakah browser mendukung WebRTC (kamera)
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('Browser tidak mendukung akses kamera.');
+    return;
+  }
+
+  // Dapatkan akses ke kamera pengguna
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(handleKameraSuccess)
+    .catch(handleKameraError);
+};
+
+const handleKameraSuccess = (stream) => {
+  // Dapatkan elemen video untuk menampilkan tampilan kamera
+  const videoElement = document.getElementById('kamera');
+
+  // Putar tampilan kamera dalam elemen video
+  videoElement.srcObject = stream;
+
+  // Inisialisasi QuaggaJS dengan konfigurasi pemindaian barcode
+  Quagga.init({
+    inputStream: {
+      constraints: {
+        video: true,
+      },
+      target: videoElement,
+    },
+    decoder: {
+      readers: ['ean_reader'], // Pilih jenis barcode yang ingin kamu pindai, seperti EAN.
+    },
+  }, function (err) {
+    if (err) {
+      console.error('Error initializing Quagga:', err);
+      return;
+    }
+    console.log('Quagga initialized.');
+    Quagga.start();
+  });
+
+  // Tangkap hasil pemindaian barcode
+  Quagga.onDetected(function (result) {
+    const barcode = result.codeResult.code;
+    tambahKeranjang(barcode);
+
+    // Tampilkan informasi produk di keranjang berdasarkan barcode
+    const rowdata = product.value.data.find((product) => product.code === barcode);
+    if (rowdata) {
+      keranjang.value.push({
+        barcode: rowdata.code,
+        name: rowdata.name,
+        price: rowdata.price,
+        qty: 1,
+        subtotal: rowdata.price * 1,
+      });
+    }
+  });
+};
+
+
 </script>
 
 <template>
@@ -60,10 +122,15 @@ const hitungTotalPembayaran = () => {
 
     <div class="flex flex-col items-center">
       <h3 class="text-2xl font-semibold mb-4">Scan Barcode</h3>
+      <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" @click="nyalakanKamera">Nyalakan Kamera</button>
       <div class="flex items-center space-x-4">
         <!-- Konten scan barcode -->
       </div>
+      <div class="flex items-center space-x-4">
+        <video id="kamera" autoplay></video>
+      </div>
     </div>
+
 
     <div class="grid grid-cols-3 gap-4">
       <div class="p-4 col-span-2">

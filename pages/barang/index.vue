@@ -32,10 +32,12 @@
             <td class="px-6 py-4">{{ product.stock }}</td>
             <td class="px-6 py-4">{{ product.code }}</td>
             <td class="px-6 py-4">
-              <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                Edit
-              </button>
-              <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2" @click="deleteProduct(product.id)">
+              <NuxtLink
+              to="/barang/edit"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+              Edit
+            </NuxtLink> 
+              <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2">
                 Hapus
               </button>              
             </td>
