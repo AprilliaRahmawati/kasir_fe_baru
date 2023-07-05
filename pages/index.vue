@@ -44,7 +44,7 @@ const hitungTotalPembayaran = () => {
   return total;
 };
 
-const transaction = () => {
+const transaction = async () => {
   // Cek apakah keranjang kosong
   if (keranjang.value.length === 0) {
     alert('Keranjang masih kosong');
@@ -61,15 +61,48 @@ const transaction = () => {
     tanggal: new Date().toISOString()
   };
 
-  // Menambahkan data transaksi ke dalam array transaksi
-  transaksi.value.push(dataTransaksi);
+  try {
+    // Kirim permintaan POST untuk membuat transaksi
+    const response = await fetch(`${config.public.apiBase}/api/transaction`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dataTransaksi),
+    });
 
-  // Mereset keranjang
-  resetKeranjang();
+    if (response.ok) {
+      // Transaksi berhasil, kurangi stok produk
+      for (const item of keranjang.value) {
+        const productResponse = await fetch(`${config.public.apiBase}/api/product/${id}`);
+        if (productResponse.ok) {
+          const product = await productResponse.json();
+          const newStock = product.stock - item.qty;
 
-  // Tampilkan informasi transaksi sukses
-  alert('Transaksi berhasil');
+          // Kirim permintaan PUT untuk memperbarui stok produk
+          await fetch(`${config.public.apiBase}/api/product/${id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ stock: newStock }),
+          });
+        }
+      }
+
+      // Reset keranjang
+      resetKeranjang();
+
+      // Tampilkan informasi transaksi sukses
+      alert('Transaksi berhasil');
+    } else {
+      console.error('Failed to create transaction:', response.status);
+    }
+  } catch (error) {
+    console.error('Failed to create transaction:', error);
+  }
 };
+
 
 
 const nyalakanKamera = () => {
