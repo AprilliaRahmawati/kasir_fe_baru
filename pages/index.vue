@@ -2,6 +2,7 @@
 import Quagga from 'quagga';
 const keranjang = ref([]);
 const barcode = ref('');
+const transaksi = ref([]);
 
 const config = useRuntimeConfig();
 const { data: product } = await useFetch(`${config.public.apiBase}/api/product`);
@@ -42,6 +43,34 @@ const hitungTotalPembayaran = () => {
   });
   return total;
 };
+
+const transaction = () => {
+  // Cek apakah keranjang kosong
+  if (keranjang.value.length === 0) {
+    alert('Keranjang masih kosong');
+    return;
+  }
+
+  // Menghitung total pembayaran
+  const total = hitungTotalPembayaran();
+
+  // Menyiapkan data transaksi
+  const dataTransaksi = {
+    items: keranjang.value,
+    total: total,
+    tanggal: new Date().toISOString()
+  };
+
+  // Menambahkan data transaksi ke dalam array transaksi
+  transaksi.value.push(dataTransaksi);
+
+  // Mereset keranjang
+  resetKeranjang();
+
+  // Tampilkan informasi transaksi sukses
+  alert('Transaksi berhasil');
+};
+
 
 const nyalakanKamera = () => {
   // Periksa apakah browser mendukung WebRTC (kamera)
@@ -174,11 +203,24 @@ const handleKameraSuccess = (stream) => {
 
         <br />
 
-        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+        <button @click="transaction" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
           Bayar
-        </button>
+        </button> 
       </div>
     </div>
+    <div>
+      <h3 class="text-2xl font-semibold mb-4">Daftar Transaksi</h3>
+      <ul class="menu-list">
+        <li v-for="(transaksi, index) in transaksi" :key="index" class="menu-link">
+          <span class="menu-icon">🛒</span>
+          <div class="flex-grow">
+            <p class="menu-text">{{ transaksi.tanggal }}</p>
+            <p class="menu-text">Total: {{ transaksi.total }}</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+    
   </div>
 </template>
 
